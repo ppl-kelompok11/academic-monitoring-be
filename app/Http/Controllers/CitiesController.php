@@ -20,7 +20,9 @@ class CitiesController extends Controller
         $filterBuilder = "";
         if (count($filter) > 0) {
             foreach ($filter as $value) {
-                $filterBuilder .= " AND $value = ?";
+                if (!empty(request()->query($value))) {
+                    $filterValue[] = request()->query($value);
+                }
             }
         }
         $cities = DB::select("SELECT * FROM cities WHERE true" .  $filterBuilder, $filterValue);
