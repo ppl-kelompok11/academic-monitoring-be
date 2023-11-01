@@ -15,16 +15,29 @@ class StudentsController extends Controller
     }
     public function index()
     {
-        $student = DB::table('students')->get();
+        $student = DB::table('students')
+            ->join('users', 'students.id', '=', 'users.ref_id')
+            ->where('role_id', 2)
+            ->paginate(10);
         return response()->json([
             'success' => true,
-            'data' => $student
+            'data' => $student->items(),
+            'meta' => [
+                'current_page' => $student->currentPage(),
+                'per_page' => $student->perPage(),
+                'last_page' => $student->lastPage(),
+                'total' => $student->total(),
+            ],
         ]);
     }
 
     public function show($id)
     {
-        $student = DB::table('students')->where('id', $id)->first();
+        $student = DB::table('students')
+            ->join('users', 'students.id', '=', 'users.ref_id')
+            ->where('role_id', 2)
+            ->where('students.id', $id)
+            ->first();
         return response()->json($student);
     }
 
@@ -42,14 +55,6 @@ class StudentsController extends Controller
             'photo' => 'nullable|string',
             'password' => 'required|string',
         ]);
-        $user = [
-            "name" => $request->name,
-            "email" => $request->email,
-            "password" => bcrypt($request->password),
-            "role_id" => 2,
-        ];
-        DB::table("users")->insert($user);
-
         $student = [
             "nim" => $request->nim,
             "province_id" => $request->province_id,
@@ -60,7 +65,17 @@ class StudentsController extends Controller
             "created_by" => Auth::user()->id,
             "updated_by" => Auth::user()->id,
         ];
-        DB::table("students")->insert($student);
+        $student_id = DB::table("students")->insertGetId($student);
+        $user = [
+            "name" => $request->name,
+            "email" => $request->email,
+            "password" => bcrypt($request->password),
+            "ref_id" => $student_id,
+            "role_id" => 2,
+        ];
+        DB::table("users")->insert($user);
+
+
         return response()->json([
             'success' => true,
             'message' => 'Student successfully registered'
