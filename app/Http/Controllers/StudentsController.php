@@ -16,6 +16,7 @@ class StudentsController extends Controller
     public function index()
     {
         $student = DB::table('students')
+            ->select('students.*', 'users.email')
             ->join('users', 'students.id', '=', 'users.ref_id')
             ->where('role_id', 2)
             ->paginate(10);
@@ -34,6 +35,7 @@ class StudentsController extends Controller
     public function show($id)
     {
         $student = DB::table('students')
+            ->select('students.*', 'users.email')
             ->join('users', 'students.id', '=', 'users.ref_id')
             ->where('role_id', 2)
             ->where('students.id', $id)
@@ -56,10 +58,13 @@ class StudentsController extends Controller
             'password' => 'required|string',
         ]);
         $student = [
+            "name" => $request->name,
             "nim" => $request->nim,
             "province_id" => $request->province_id,
             "city_id" => $request->city_id,
             "start_education_year" => $request->start_education_year,
+            "lecture_id" => 1,
+            "entrance_code" => $request->entrance_code,
             "status" => $request->status,
             "photo" => $request->photo,
             "created_by" => Auth::user()->id,
@@ -67,7 +72,6 @@ class StudentsController extends Controller
         ];
         $student_id = DB::table("students")->insertGetId($student);
         $user = [
-            "name" => $request->name,
             "email" => $request->email,
             "password" => bcrypt($request->password),
             "ref_id" => $student_id,

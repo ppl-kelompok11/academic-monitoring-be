@@ -13,17 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('students', function (Blueprint $table) {
+        Schema::create('irs', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('nim', 14)->unique();
-            $table->bigInteger('province_id')->unsigned()->nullable();
-            $table->bigInteger('city_id')->unsigned()->nullable();
-            $table->integer('start_education_year');
-            $table->integer('lecture_id')->unsigned();
-            $table->string('entrance_code');
-            $table->string('status');
-            $table->text('photo')->nullable();
+            $table->integer('semester');
+            $table->integer('sks');
+            $table->text('scan_irs');
+            $table->bigInteger('student_id')->unsigned();
+            $table->bigInteger('college_year_id')->unsigned();
             $table->bigInteger('created_by')->unsigned();
             $table->bigInteger('updated_by')->unsigned();
             $table->timestamps();
@@ -37,6 +33,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('students');
+        Schema::dropIfExists('irs');
     }
 };

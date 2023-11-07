@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('lecture', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
             $table->string('nip', 14)->unique();
             $table->string('nidn', 14)->unique();
             $table->bigInteger('province_id')->unsigned()->nullable();

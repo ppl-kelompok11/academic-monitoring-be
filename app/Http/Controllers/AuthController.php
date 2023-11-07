@@ -30,10 +30,12 @@ class AuthController extends Controller
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
+
         return response()->json([
             'success' => true,
             'message' => 'Login success',
             'token' => $token,
+            'profile' => auth()->user()
         ]);
     }
 
