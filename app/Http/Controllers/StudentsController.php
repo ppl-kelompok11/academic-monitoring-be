@@ -73,9 +73,9 @@ class StudentsController extends Controller
         // create email with name + nim + @gmail.com
 
         // remove space
-        $name = str_replace(' ', '', $request->name);
+        // $name = str_replace(' ', '', $request->name);
         $user = [
-            "email" => $name . $request->nim . "@gmail.com",
+            "email" => $request->nim . "@gmail.com",
             "password" => bcrypt('123456'),
             "ref_id" => $student_id,
             "role_id" => 2,
