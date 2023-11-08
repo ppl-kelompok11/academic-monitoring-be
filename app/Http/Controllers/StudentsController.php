@@ -48,14 +48,12 @@ class StudentsController extends Controller
         // validate incoming request
         $this->validate($request, [
             'name' => 'required|string',
-            'email' => 'required|string|unique:users,email',
             'nim' => 'required|string|unique:students,nim',
             'province_id' => 'nullable|integer',
             'city_id' => 'nullable|integer',
             'start_education_year' => 'required|integer',
             'status' => 'required|string',
             'photo' => 'nullable|string',
-            'password' => 'required|string',
         ]);
         $student = [
             "name" => $request->name,
@@ -71,9 +69,14 @@ class StudentsController extends Controller
             "updated_by" => Auth::user()->id,
         ];
         $student_id = DB::table("students")->insertGetId($student);
+
+        // create email with name + nim + @gmail.com
+
+        // remove space
+        $name = str_replace(' ', '', $request->name);
         $user = [
-            "email" => $request->email,
-            "password" => bcrypt($request->password),
+            "email" => $name . $request->nim . "@gmail.com",
+            "password" => bcrypt('123456'),
             "ref_id" => $student_id,
             "role_id" => 2,
         ];
