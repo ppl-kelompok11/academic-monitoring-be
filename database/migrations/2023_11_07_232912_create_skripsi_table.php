@@ -13,11 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('khs', function (Blueprint $table) {
+        Schema::create('skripsi', function (Blueprint $table) {
             $table->id();
-            $table->integer('semester');
-            $table->integer('sks');
-            $table->text('scan_irs');
+            $table->integer('grade');
+            $table->text('scan_skripsi');
+            $table->string('skripsi_status');
             $table->string('verification_status');
             $table->bigInteger('student_id')->unsigned();
             $table->bigInteger('college_year_id')->unsigned();
@@ -34,6 +34,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('khs');
+        Schema::dropIfExists('skripsi');
     }
 };

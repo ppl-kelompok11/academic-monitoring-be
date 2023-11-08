@@ -64,10 +64,8 @@ class FileController extends Controller
 
     public function getFile($model, $fileName)
     {
-        dd("masuk");
-        $data = $fileName;
+        $data = $model . "/" . $fileName;
         if (Storage::exists($data)) {
-            dd("ada");
             $file = Storage::get($data);
             $type = Storage::mimeType($data);
 
@@ -76,6 +74,7 @@ class FileController extends Controller
 
             return $response;
         } else {
+            dd("tidak ada");
             $path = "default/notfound.png";
             $file = Storage::get($path);
             $type = Storage::mimeType($path);

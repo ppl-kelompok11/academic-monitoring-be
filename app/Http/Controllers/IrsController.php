@@ -48,8 +48,8 @@ class IrsController extends Controller
         ], 404);
 
         $irs->scan_irs = [
-            "url" => env('APP_URL') . "/file/" . $irs->scan_irs,
-            "path" => $irs->scan_irs
+            "url" => env('APP_URL') . "/api/file/" . $irs->scan_irs,
+            "path" => $irs->scan_irs,
         ];
 
         return response()->json($irs);
@@ -94,7 +94,7 @@ class IrsController extends Controller
             "scan_irs" => $request->scan_irs,
             "student_id" => $student_id,
             "college_year_id" => $active_college_year->id,
-            "status" => "pending",
+            "verification_status" => "pending",
             "created_by" => Auth::user()->id,
             "updated_by" => Auth::user()->id,
         ];
@@ -143,7 +143,7 @@ class IrsController extends Controller
         $irs = [
             "semester" => $request->semester,
             "sks" => $request->sks,
-            "status" => "pending",
+            "verification_status" => "pending",
             "scan_irs" => $request->scan_irs,
             "created_by" => Auth::user()->id,
             "updated_by" => Auth::user()->id,

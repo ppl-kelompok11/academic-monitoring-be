@@ -17,7 +17,11 @@ return new class extends Migration
             $table->id();
             $table->integer('semester');
             $table->integer('sks');
-            $table->text('scan_irs');
+            $table->integer('sks_kumulatif');
+            $table->text('scan_khs');
+            $table->integer('ip');
+            $table->integer('ipk');
+            $table->bigInteger('irs_id')->unsigned();
             $table->string('verification_status');
             $table->bigInteger('student_id')->unsigned();
             $table->bigInteger('college_year_id')->unsigned();

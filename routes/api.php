@@ -6,6 +6,9 @@ use App\Http\Controllers\FileController;
 use App\Http\Controllers\ProvinceController;
 use App\Http\Controllers\StudentsController;
 use App\Http\Controllers\IrsController;
+use App\Http\Controllers\KhsController;
+use App\Http\Controllers\PklController;
+use App\Http\Controllers\SkripsiController;
 use App\Http\Controllers\LectureController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -88,6 +91,48 @@ Route::group(
         Route::get('/{id}', [IrsController::class, 'show']);
         Route::post('/', [IrsController::class, 'store']);
         Route::put('/', [IrsController::class, 'update']);
+    }
+);
+
+// khs
+Route::group(
+    [
+        'middleware' => 'jwtmiddleware',
+        'prefix' => 'khs'
+    ],
+    function ($router) {
+        Route::get('/', [KhsController::class, 'index']);
+        Route::get('/{id}', [KhsController::class, 'show']);
+        Route::post('/', [KhsController::class, 'store']);
+        Route::put('/', [KhsController::class, 'update']);
+    }
+);
+
+// pkl
+Route::group(
+    [
+        'middleware' => 'jwtmiddleware',
+        'prefix' => 'pkl'
+    ],
+    function ($router) {
+        Route::get('/', [PklController::class, 'index']);
+        Route::get('/{id}', [PklController::class, 'show']);
+        Route::post('/', [PklController::class, 'store']);
+        Route::put('/', [PklController::class, 'update']);
+    }
+);
+
+// skripsi
+Route::group(
+    [
+        'middleware' => 'jwtmiddleware',
+        'prefix' => 'skripsi'
+    ],
+    function ($router) {
+        Route::get('/', [SkripsiController::class, 'index']);
+        Route::get('/{id}', [SkripsiController::class, 'show']);
+        Route::post('/', [SkripsiController::class, 'store']);
+        Route::put('/', [SkripsiController::class, 'update']);
     }
 );
 
