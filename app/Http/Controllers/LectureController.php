@@ -54,7 +54,7 @@ class LectureController extends Controller
                 'nidn' => 'required|string',
                 'province_id' => 'nullable|integer',
                 'city_id' => 'nullable|integer',
-                'work_start_date' => 'required|date',
+                'work_start_date' => 'nullable|date',
                 'photo' => 'nullable|string',
                 'password' => 'required|string',
             ]);
@@ -111,7 +111,7 @@ class LectureController extends Controller
             'nidn' => 'required|string|unique:students,nim,' . $id,
             'province_id' => 'nullable|integer',
             'city_id' => 'nullable|integer',
-            'work_start_date' => 'required|integer',
+            'work_start_date' => 'nullable|integer',
             'photo' => 'nullable|string',
         ]);
         $data = [
