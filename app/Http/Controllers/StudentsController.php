@@ -79,6 +79,7 @@ class StudentsController extends Controller
             "password" => bcrypt('123456'),
             "ref_id" => $student_id,
             "role_id" => 2,
+            "active" => false,
         ];
         DB::table("users")->insert($user);
 
