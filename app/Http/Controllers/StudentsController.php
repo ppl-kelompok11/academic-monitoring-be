@@ -43,6 +43,17 @@ class StudentsController extends Controller
             ->where('role_id', 2)
             ->where('students.id', $id)
             ->first();
+
+        $field_uploads = ["photo"];
+        // add url to field_uploads
+        foreach ($field_uploads as $field_upload) {
+            if ($student->$field_upload) {
+                $student->$field_upload = [
+                    "url" => env('APP_URL') . "/api/file/" . $student->$field_upload,
+                    "path" => $student->$field_upload,
+                ];
+            }
+        }
         return response()->json($student);
     }
 
@@ -190,8 +201,9 @@ class StudentsController extends Controller
                 "email" => $request->email,
             ];
 
-            if ($old_data_user->active) {
+            if (!$old_data_user->active) {
                 $user['password'] = bcrypt($request->password);
+                $user['active'] = true;
             }
             db::table("users")->where('id', Auth::user()->id)->update($user);
         }
@@ -200,5 +212,9 @@ class StudentsController extends Controller
             'success' => true,
             'message' => 'Student successfully updated'
         ], 201);
+    }
+
+    public function academicHistory(Request $request)
+    {
     }
 }
