@@ -106,7 +106,7 @@ Route::group(
         Route::get('/{id}', [KhsController::class, 'show']);
         Route::post('/', [KhsController::class, 'store']);
         Route::put('/', [KhsController::class, 'update']);
-        Route::put('/validate', [IrsController::class, 'validation']);
+        Route::put('/validate', [KhsController::class, 'validation']);
     }
 );
 
@@ -121,7 +121,7 @@ Route::group(
         Route::get('/{id}', [PklController::class, 'show']);
         Route::post('/', [PklController::class, 'store']);
         Route::put('/', [PklController::class, 'update']);
-        Route::put('/validate', [IrsController::class, 'validation']);
+        Route::put('/validate', [PklController::class, 'validation']);
     }
 );
 
@@ -136,7 +136,7 @@ Route::group(
         Route::get('/{id}', [SkripsiController::class, 'show']);
         Route::post('/', [SkripsiController::class, 'store']);
         Route::put('/', [SkripsiController::class, 'update']);
-        Route::put('/validate', [IrsController::class, 'validation']);
+        Route::put('/validate', [SkripsiController::class, 'validation']);
     }
 );
 
