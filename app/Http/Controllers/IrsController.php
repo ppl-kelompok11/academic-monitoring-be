@@ -53,6 +53,19 @@ class IrsController extends Controller
 
         $irs = $irs->paginate($limit, ['page' => $page]);
 
+        $field_uploads = ["scan_irs"];
+        // add url to scan_irs
+        foreach ($irs->items() as $item) {
+            foreach ($field_uploads as $field_upload) {
+                if ($item->$field_upload) {
+                    $item->$field_upload = [
+                        "url" => env('APP_URL') . "/api/file/" . $item->$field_upload,
+                        "path" => $item->$field_upload,
+                    ];
+                }
+            }
+        }
+
         return response()->json([
             'success' => true,
             'data' => $irs->items(),
