@@ -14,13 +14,45 @@ class IrsController extends Controller
     {
         $this->middleware('jwtmiddleware');
     }
-    public function index()
+    public function index(Request $request)
     {
-        $student_id = Auth::user()->ref_id;
+        if (Auth::user()->role_id == 2) {
+            $student_id = Auth::user()->ref_id;
+        }
+        if (Auth::user()->role_id == 3) {
+            $lecture_id = Auth::user()->ref_id;
+        }
 
-        $irs = DB::table('irs')
-            ->where('student_id', $student_id)
-            ->paginate(10);
+        $irs = DB::table('irs')->select("irs.*", "students.name", "students.nim")->leftJoin("students", "irs.student_id", "=", "students.id")->where('irs.verification_status', 'pending');;
+
+        if (Auth::user()->role_id == 2) {
+            $irs = $irs->where('irs.student_id', $student_id);
+        }
+        if (Auth::user()->role_id == 3) {
+            $irs = $irs->where('students.lecture_id', $lecture_id);
+        }
+
+        $search = $request->search;
+        if (isset($search)) {
+            $irs = $irs->where(function ($query) use ($search) {
+                $query->whereRaw("UPPER(students.name) LIKE '" . strtoupper($search) . "%'")
+                    ->orwhereRaw("UPPER(students.nim) LIKE '" . strtoupper($search) . "%'");
+            });
+        }
+
+        $page = 1;
+        if (isset($request->page)) {
+            $page = $request->page;
+        }
+
+
+        $limit = 10;
+        if (isset($request->limit)) {
+            $limit = $request->limit;
+        }
+
+        $irs = $irs->paginate($limit, ['page' => $page]);
+
         return response()->json([
             'success' => true,
             'data' => $irs->items(),

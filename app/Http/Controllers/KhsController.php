@@ -15,21 +15,52 @@ class KhsController extends Controller
     {
         $this->middleware('jwtmiddleware');
     }
-    public function index()
+    public function index(Request $request)
     {
-        $student_id = Auth::user()->ref_id;
+        if (Auth::user()->role_id == 2) {
+            $student_id = Auth::user()->ref_id;
+        }
+        if (Auth::user()->role_id == 3) {
+            $lecture_id = Auth::user()->ref_id;
+        }
 
-        $irs = DB::table('khs')
-            ->where('student_id', $student_id)
-            ->paginate(10);
+        $khs = DB::table('khs')->select("khs.*", "students.name", "students.nim")->leftJoin("students", "khs.student_id", "=", "students.id");
+
+        if (Auth::user()->role_id == 2) {
+            $khs = $khs->where('khs.student_id', $student_id);
+        }
+        if (Auth::user()->role_id == 3) {
+            $khs = $khs->where('students.lecture_id', $lecture_id)->where('khs.verification_status', 'pending');
+        }
+
+        $search = $request->search;
+        if (isset($search)) {
+            $khs = $khs->where(function ($query) use ($search) {
+                $query->whereRaw("UPPER(students.name) LIKE '" . strtoupper($search) . "%'")
+                    ->orwhereRaw("UPPER(students.nim) LIKE '" . strtoupper($search) . "%'");
+            });
+        }
+
+        $page = 1;
+        if (isset($request->page)) {
+            $page = $request->page;
+        }
+
+
+        $limit = 10;
+        if (isset($request->limit)) {
+            $limit = $request->limit;
+        }
+
+        $khs = $khs->paginate($limit, ['page' => $page]);
         return response()->json([
             'success' => true,
-            'data' => $irs->items(),
+            'data' => $khs->items(),
             'meta' => [
-                'current_page' => $irs->currentPage(),
-                'per_page' => $irs->perPage(),
-                'last_page' => $irs->lastPage(),
-                'total' => $irs->total(),
+                'current_page' => $khs->currentPage(),
+                'per_page' => $khs->perPage(),
+                'last_page' => $khs->lastPage(),
+                'total' => $khs->total(),
             ],
         ]);
     }
