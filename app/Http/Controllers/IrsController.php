@@ -23,7 +23,7 @@ class IrsController extends Controller
             $lecture_id = Auth::user()->ref_id;
         }
 
-        $irs = DB::table('irs')->select("irs.*", "students.name", "students.nim")->leftJoin("students", "irs.student_id", "=", "students.id")->where('irs.verification_status', 'pending');;
+        $irs = DB::table('irs')->select("irs.*", "students.name", "students.nim")->leftJoin("students", "irs.student_id", "=", "students.id")->where('irs.verification_status', '01');;
 
         if (Auth::user()->role_id == 2) {
             $irs = $irs->where('irs.student_id', $student_id);
@@ -126,7 +126,7 @@ class IrsController extends Controller
             "scan_irs" => $request->scan_irs,
             "student_id" => $student_id,
             "college_year_id" => $active_college_year->id,
-            "verification_status" => "pending",
+            "verification_status" => "01",
             "created_by" => Auth::user()->id,
             "updated_by" => Auth::user()->id,
         ];
@@ -175,7 +175,7 @@ class IrsController extends Controller
         $irs = [
             "semester" => $request->semester,
             "sks" => $request->sks,
-            "verification_status" => "pending",
+            "verification_status" => "01",
             "scan_irs" => $request->scan_irs,
             "created_by" => Auth::user()->id,
             "updated_by" => Auth::user()->id,
@@ -186,6 +186,27 @@ class IrsController extends Controller
             'success' => true,
             'data' => $irs,
             'message' => 'Data Berhasil Diperbarui'
+        ], 200);
+    }
+    public function validation(Request $request)
+    {
+        // validate incoming request
+        $this->validate($request, [
+            'id' => 'required|integer',
+            'verification_status' => 'required|string|in:00,01,02',
+        ]);
+
+        $irs = [
+            "verification_status" => $request->verification_status,
+            "updated_by" => Auth::user()->id,
+        ];
+
+        DB::table("irs")->where('id', $request->id)->update($irs);
+
+        return response()->json([
+            'success' => true,
+            'data' => $irs,
+            'message' => 'Status Berhasil Diperbarui'
         ], 200);
     }
 }

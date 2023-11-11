@@ -30,7 +30,7 @@ class KhsController extends Controller
             $khs = $khs->where('khs.student_id', $student_id);
         }
         if (Auth::user()->role_id == 3) {
-            $khs = $khs->where('students.lecture_id', $lecture_id)->where('khs.verification_status', 'pending');
+            $khs = $khs->where('students.lecture_id', $lecture_id)->where('khs.verification_status', '01');
         }
 
         $search = $request->search;
@@ -152,7 +152,7 @@ class KhsController extends Controller
             "semester" => $irs->semester,
             "student_id" => $student_id,
             "college_year_id" => $irs->college_year_id,
-            "verification_status" => "pending",
+            "verification_status" => "01",
             "created_by" => Auth::user()->id,
             "updated_by" => Auth::user()->id,
         ];
@@ -231,7 +231,7 @@ class KhsController extends Controller
             "semester" => $irs->semester,
             "student_id" => $student_id,
             "college_year_id" => $irs->college_year_id,
-            "verification_status" => "pending",
+            "verification_status" => "01",
             "created_by" => Auth::user()->id,
             "updated_by" => Auth::user()->id,
         ];
@@ -242,6 +242,27 @@ class KhsController extends Controller
             'success' => true,
             'data' => $khs,
             'message' => 'Data Berhasil Diperbarui'
+        ], 200);
+    }
+    public function validation(Request $request)
+    {
+        // validate incoming request
+        $this->validate($request, [
+            'id' => 'required|integer',
+            'verification_status' => 'required|string|in:00,01,02',
+        ]);
+
+        $khs = [
+            "verification_status" => $request->verification_status,
+            "updated_by" => Auth::user()->id,
+        ];
+
+        DB::table("khs")->where('id', $request->id)->update($khs);
+
+        return response()->json([
+            'success' => true,
+            'data' => $khs,
+            'message' => 'Status Berhasil Diperbarui'
         ], 200);
     }
 }

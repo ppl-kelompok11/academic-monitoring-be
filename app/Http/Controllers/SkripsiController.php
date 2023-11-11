@@ -30,7 +30,7 @@ class SkripsiController extends Controller
             $skripsi = $skripsi->where('skripsi.student_id', $student_id);
         }
         if (Auth::user()->role_id == 3) {
-            $skripsi = $skripsi->where('students.lecture_id', $lecture_id)->where('skripsi.verification_status', 'pending');
+            $skripsi = $skripsi->where('students.lecture_id', $lecture_id)->where('skripsi.verification_status', '01');
         }
 
         $search = $request->search;
@@ -137,7 +137,7 @@ class SkripsiController extends Controller
             "scan_skripsi" => $request->scan_skripsi,
             "student_id" => $student_id,
             "college_year_id" => $active_college_year->id,
-            "verification_status" => "pending",
+            "verification_status" => "01",
             "created_by" => Auth::user()->id,
             "updated_by" => Auth::user()->id,
         ];
@@ -201,7 +201,7 @@ class SkripsiController extends Controller
             "scan_skripsi" => $request->scan_skripsi,
             "student_id" => $student_id,
             "college_year_id" => $active_college_year->id,
-            "verification_status" => "pending",
+            "verification_status" => "01",
             "created_by" => Auth::user()->id,
             "updated_by" => Auth::user()->id,
         ];
@@ -213,6 +213,27 @@ class SkripsiController extends Controller
             'success' => true,
             'data' => $skripsi,
             'message' => 'Data Berhasil Diperbarui'
+        ], 200);
+    }
+    public function validation(Request $request)
+    {
+        // validate incoming request
+        $this->validate($request, [
+            'id' => 'required|integer',
+            'verification_status' => 'required|string|in:00,01,02',
+        ]);
+
+        $skripsi = [
+            "verification_status" => $request->verification_status,
+            "updated_by" => Auth::user()->id,
+        ];
+
+        DB::table("skripsi")->where('id', $request->id)->update($skripsi);
+
+        return response()->json([
+            'success' => true,
+            'data' => $skripsi,
+            'message' => 'Status Berhasil Diperbarui'
         ], 200);
     }
 }

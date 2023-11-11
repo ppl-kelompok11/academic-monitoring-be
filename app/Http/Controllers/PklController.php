@@ -30,7 +30,7 @@ class PklController extends Controller
             $pkl = $pkl->where('pkl.student_id', $student_id);
         }
         if (Auth::user()->role_id == 3) {
-            $pkl = $pkl->where('students.lecture_id', $lecture_id)->where('pkl.verification_status', 'pending');
+            $pkl = $pkl->where('students.lecture_id', $lecture_id)->where('pkl.verification_status', '01');
         }
 
         $search = $request->search;
@@ -137,7 +137,7 @@ class PklController extends Controller
             "scan_pkl" => $request->scan_pkl,
             "student_id" => $student_id,
             "college_year_id" => $active_college_year->id,
-            "verification_status" => "pending",
+            "verification_status" => "01",
             "created_by" => Auth::user()->id,
             "updated_by" => Auth::user()->id,
         ];
@@ -201,7 +201,7 @@ class PklController extends Controller
             "scan_pkl" => $request->scan_pkl,
             "student_id" => $student_id,
             "college_year_id" => $active_college_year->id,
-            "verification_status" => "pending",
+            "verification_status" => "01",
             "created_by" => Auth::user()->id,
             "updated_by" => Auth::user()->id,
         ];
@@ -213,6 +213,27 @@ class PklController extends Controller
             'success' => true,
             'data' => $pkl,
             'message' => 'Data Berhasil Diperbarui'
+        ], 200);
+    }
+    public function validation(Request $request)
+    {
+        // validate incoming request
+        $this->validate($request, [
+            'id' => 'required|integer',
+            'verification_status' => 'required|string|in:00,01,02',
+        ]);
+
+        $pkl = [
+            "verification_status" => $request->verification_status,
+            "updated_by" => Auth::user()->id,
+        ];
+
+        DB::table("pkl")->where('id', $request->id)->update($pkl);
+
+        return response()->json([
+            'success' => true,
+            'data' => $pkl,
+            'message' => 'Status Berhasil Diperbarui'
         ], 200);
     }
 }
