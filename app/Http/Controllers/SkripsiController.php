@@ -15,13 +15,44 @@ class SkripsiController extends Controller
     {
         $this->middleware('jwtmiddleware');
     }
-    public function index()
+    public function index(Request $request)
     {
-        $student_id = Auth::user()->ref_id;
+        if (Auth::user()->role_id == 2) {
+            $student_id = Auth::user()->ref_id;
+        }
+        if (Auth::user()->role_id == 3) {
+            $lecture_id = Auth::user()->ref_id;
+        }
 
-        $skripsi = DB::table('skripsi')
-            ->where('student_id', $student_id)
-            ->paginate(10);
+        $skripsi = DB::table('skripsi')->select("skripsi.*", "students.name", "students.nim")->leftJoin("students", "skripsi.student_id", "=", "students.id");
+
+        if (Auth::user()->role_id == 2) {
+            $skripsi = $skripsi->where('skripsi.student_id', $student_id);
+        }
+        if (Auth::user()->role_id == 3) {
+            $skripsi = $skripsi->where('students.lecture_id', $lecture_id)->where('skripsi.verification_status', 'pending');
+        }
+
+        $search = $request->search;
+        if (isset($search)) {
+            $skripsi = $skripsi->where(function ($query) use ($search) {
+                $query->whereRaw("UPPER(students.name) LIKE '" . strtoupper($search) . "%'")
+                    ->orwhereRaw("UPPER(students.nim) LIKE '" . strtoupper($search) . "%'");
+            });
+        }
+
+        $page = 1;
+        if (isset($request->page)) {
+            $page = $request->page;
+        }
+
+
+        $limit = 10;
+        if (isset($request->limit)) {
+            $limit = $request->limit;
+        }
+
+        $skripsi = $skripsi->paginate($limit, ['page' => $page]);
         return response()->json([
             'success' => true,
             'data' => $skripsi->items(),

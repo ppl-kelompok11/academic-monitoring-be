@@ -15,13 +15,44 @@ class PklController extends Controller
     {
         $this->middleware('jwtmiddleware');
     }
-    public function index()
+    public function index(Request $request)
     {
-        $student_id = Auth::user()->ref_id;
+        if (Auth::user()->role_id == 2) {
+            $student_id = Auth::user()->ref_id;
+        }
+        if (Auth::user()->role_id == 3) {
+            $lecture_id = Auth::user()->ref_id;
+        }
 
-        $pkl = DB::table('pkl')
-            ->where('student_id', $student_id)
-            ->paginate(10);
+        $pkl = DB::table('pkl')->select("pkl.*", "students.name", "students.nim")->leftJoin("students", "pkl.student_id", "=", "students.id");
+
+        if (Auth::user()->role_id == 2) {
+            $pkl = $pkl->where('pkl.student_id', $student_id);
+        }
+        if (Auth::user()->role_id == 3) {
+            $pkl = $pkl->where('students.lecture_id', $lecture_id)->where('pkl.verification_status', 'pending');
+        }
+
+        $search = $request->search;
+        if (isset($search)) {
+            $pkl = $pkl->where(function ($query) use ($search) {
+                $query->whereRaw("UPPER(students.name) LIKE '" . strtoupper($search) . "%'")
+                    ->orwhereRaw("UPPER(students.nim) LIKE '" . strtoupper($search) . "%'");
+            });
+        }
+
+        $page = 1;
+        if (isset($request->page)) {
+            $page = $request->page;
+        }
+
+
+        $limit = 10;
+        if (isset($request->limit)) {
+            $limit = $request->limit;
+        }
+
+        $pkl = $pkl->paginate($limit, ['page' => $page]);
         return response()->json([
             'success' => true,
             'data' => $pkl->items(),
