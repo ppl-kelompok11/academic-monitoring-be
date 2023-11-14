@@ -70,6 +70,7 @@ class StudentsController extends Controller
             'city_id' => 'nullable|integer',
             'start_education_year' => 'required|integer',
             'status' => 'required|string',
+            'entrance_code' => 'required|string',
             'photo' => 'nullable|string',
         ]);
         $student = [
