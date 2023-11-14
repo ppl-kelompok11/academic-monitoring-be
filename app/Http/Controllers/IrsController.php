@@ -59,6 +59,8 @@ class IrsController extends Controller
             foreach ($field_uploads as $field_upload) {
                 if ($item->$field_upload) {
                     $item->$field_upload = [
+                        // get file name from last / in path
+                        "filename" => substr($item->$field_upload, strrpos($item->$field_upload, '/') + 1),
                         "url" => env('APP_URL') . "/api/file/" . $item->$field_upload,
                         "path" => $item->$field_upload,
                     ];
@@ -93,6 +95,7 @@ class IrsController extends Controller
         ], 404);
 
         $irs->scan_irs = [
+            "filename" => substr($irs->scan_irs, strrpos($irs->scan_irs, '/') + 1),
             "url" => env('APP_URL') . "/api/file/" . $irs->scan_irs,
             "path" => $irs->scan_irs,
         ];

@@ -95,6 +95,7 @@ class KhsController extends Controller
         ], 404);
 
         $khs->scan_khs = [
+            "filename" => substr($khs->scan_khs, strrpos($khs->scan_khs, '/') + 1),
             "url" => env('APP_URL') . "/api/file/" . $khs->scan_khs,
             "path" => $khs->scan_khs,
         ];

@@ -94,6 +94,7 @@ class SkripsiController extends Controller
         ], 404);
 
         $skripsi->scan_skripsi = [
+            "filename" => substr($skripsi->scan_skripsi, strrpos($skripsi->scan_skripsi, '/') + 1),
             "url" => env('APP_URL') . "/api/file/" . $skripsi->scan_skripsi,
             "path" => $skripsi->scan_skripsi,
         ];

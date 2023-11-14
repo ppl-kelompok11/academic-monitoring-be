@@ -94,6 +94,7 @@ class PklController extends Controller
         ], 404);
 
         $pkl->scan_pkl = [
+            "filename" => substr($pkl->scan_pkl, strrpos($pkl->scan_pkl, '/') + 1),
             "url" => env('APP_URL') . "/api/file/" . $pkl->scan_pkl,
             "path" => $pkl->scan_pkl,
         ];
