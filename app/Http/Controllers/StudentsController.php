@@ -39,10 +39,10 @@ class StudentsController extends Controller
     {
         $student = DB::table('students')
             ->select('students.*', 'users.email', 'lecture.name as lecture_name', 'provinces.province_name', 'cities.city_name')
-            ->join('users', 'students.id', '=', 'users.ref_id')
-            ->join('lecture', 'students.lecture_id', '=', 'lecture.id')
-            ->join('provinces', 'students.province_id', '=', 'provinces.id')
-            ->join('cities', 'students.city_id', '=', 'cities.id')
+            ->leftJoin('users', 'students.id', '=', 'users.ref_id')
+            ->leftJoin('lecture', 'students.lecture_id', '=', 'lecture.id')
+            ->leftJoin('provinces', 'students.province_id', '=', 'provinces.id')
+            ->leftJoin('cities', 'students.city_id', '=', 'cities.id')
             ->where('role_id', 2)
             ->where('students.id', $id)
             ->first();
