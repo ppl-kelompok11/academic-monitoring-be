@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CitiesController;
 use App\Http\Controllers\FileController;
 use App\Http\Controllers\ProvinceController;
+use App\Http\Controllers\SemesterController;
 use App\Http\Controllers\StudentsController;
 use App\Http\Controllers\IrsController;
 use App\Http\Controllers\KhsController;
@@ -78,6 +79,16 @@ Route::group(
     ],
     function ($router) {
         Route::get('/lookup', [ProvinceController::class, 'lookup']);
+    }
+);
+
+Route::group(
+    [
+        'middleware' => 'jwtmiddleware',
+        'prefix' => 'semester'
+    ],
+    function ($router) {
+        Route::get('/lookup', [SemesterController::class, 'lookup']);
     }
 );
 // irs

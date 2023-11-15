@@ -107,9 +107,8 @@ class PklController extends Controller
         $student_id = Auth::user()->ref_id;
         // validate incoming request
         $validator = Validator::make($request->all(),  [
-            'pkl_status' => 'required|string|in:not_taken,ongoing,passed',
-            'grade' => 'requiredif:pkl_status,passed|string',
-            'scan_pkl' => 'requiredif:pkl_status,passed|string',
+            'grade' => 'required|string',
+            'scan_pkl' => 'required|string',
             'semester_value' => 'required|integer',
         ]);
 
@@ -149,7 +148,6 @@ class PklController extends Controller
 
         $pkl = [
             "semester_value" => $request->semester,
-            "pkl_status" => $request->pkl_status,
             "grade" => $request->grade,
             "scan_pkl" => $request->scan_pkl,
             "student_id" => $student_id,
@@ -173,9 +171,8 @@ class PklController extends Controller
         $student_id = Auth::user()->ref_id;
         // validate incoming request
         $validator = Validator::make($request->all(),  [
-            'pkl_status' => 'required|string|in:not_taken,ongoing,passed',
-            'grade' => 'requiredif:pkl_status,passed|nullable|integer',
-            'scan_pkl' => 'requiredif:pkl_status,passed|nullable|integer',
+            'grade' => 'required|string',
+            'scan_pkl' => 'required|string',
             'semester_value' => 'required|integer',
         ]);
 
@@ -215,7 +212,6 @@ class PklController extends Controller
 
         $pkl = [
             "semester_value" => $request->semester,
-            "pkl_status" => $request->pkl_status,
             "grade" => $request->grade,
             "scan_pkl" => $request->scan_pkl,
             "student_id" => $student_id,
@@ -225,8 +221,7 @@ class PklController extends Controller
             "updated_by" => Auth::user()->id,
         ];
 
-        $pkl_id = DB::table("pkl")->insertGetId($pkl);
-        $pkl["id"] = $pkl_id;
+        $pkl_id = DB::table("pkl")->where('id', $request->id)->update($pkl);
 
         return response()->json([
             'success' => true,

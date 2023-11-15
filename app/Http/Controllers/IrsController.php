@@ -137,7 +137,7 @@ class IrsController extends Controller
             ->first();
 
         $irs = [
-            "semester_value" => $request->semester,
+            "semester_value" => $request->semester_value,
             "sks" => $request->sks,
             "scan_irs" => $request->scan_irs,
             "student_id" => $student_id,
