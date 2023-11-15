@@ -46,6 +46,7 @@ Route::group(
         Route::get('/{id}', [StudentsController::class, 'show']);
         Route::post('/', [StudentsController::class, 'store']);
         Route::put('/', [StudentsController::class, 'update']);
+        Route::get('/academic/{id}', [StudentsController::class, 'academic']);
     }
 );
 

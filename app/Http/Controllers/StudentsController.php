@@ -15,13 +15,23 @@ class StudentsController extends Controller
     {
         $this->middleware('jwtmiddleware');
     }
-    public function index()
+    public function index(Request $request)
     {
         $student = DB::table('students')
             ->select('students.*', 'users.email')
             ->join('users', 'students.id', '=', 'users.ref_id')
-            ->where('role_id', 2)
-            ->paginate(10);
+            ->where('role_id', 2);
+
+
+        $search = $request->search;
+        if (isset($search)) {
+            $student = $student->where(function ($query) use ($search) {
+                $query->whereRaw("UPPER(students.name) LIKE '" . strtoupper($search) . "%'")
+                    ->orwhereRaw("UPPER(students.nim) LIKE '" . strtoupper($search) . "%'");
+            });
+        }
+
+        $student = $student->paginate(10);
 
         return response()->json([
             'success' => true,
@@ -218,7 +228,42 @@ class StudentsController extends Controller
         ], 201);
     }
 
-    public function academicHistory(Request $request)
+    public function academic($id)
     {
+
+        $student = DB::table('students')->where('id', $id)->first();
+
+        if (!$student) {
+            return response()->json([
+                'success' => false,
+                'message' => "Student not found",
+            ], 422);
+        }
+
+        $academic_history = DB::table('semester')
+            ->leftJoin('irs', function ($join) use ($id) {
+                $join->on('irs.semester_value', '=', 'semester.value')
+                    ->where('irs.student_id', '=', $id);
+            })
+            ->leftJoin('khs', function ($join) use ($id) {
+                $join->on('khs.semester_value', '=', 'semester.value')
+                    ->where('khs.student_id', '=', $id);
+            })
+            ->leftJoin('pkl', function ($join) use ($id) {
+                $join->on('pkl.semester_value', '=', 'semester.value')
+                    ->where('pkl.student_id', '=', $id);
+            })
+            ->leftJoin('skripsi', function ($join) use ($id) {
+                $join->on('skripsi.semester_value', '=', 'semester.value')
+                    ->where('skripsi.student_id', '=', $id);
+            })
+            ->select('semester.value as semester_value', 'irs.verification_status as irs_verification_status', 'khs.verification_status as khs_verification_status', 'pkl.verification_status as pkl_verification_status', 'skripsi.verification_status as skripsi_verification_status')
+            ->orderBy('semester.value', 'asc')
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $academic_history,
+        ], 200);
     }
 }
