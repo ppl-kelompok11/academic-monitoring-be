@@ -110,6 +110,7 @@ class PklController extends Controller
             'pkl_status' => 'required|string|in:not_taken,ongoing,passed',
             'grade' => 'requiredif:pkl_status,passed|string',
             'scan_pkl' => 'requiredif:pkl_status,passed|string',
+            'semester_value' => 'required|integer',
         ]);
 
         // if error
@@ -147,6 +148,7 @@ class PklController extends Controller
         }
 
         $pkl = [
+            "semester_value" => $request->semester,
             "pkl_status" => $request->pkl_status,
             "grade" => $request->grade,
             "scan_pkl" => $request->scan_pkl,
@@ -174,6 +176,7 @@ class PklController extends Controller
             'pkl_status' => 'required|string|in:not_taken,ongoing,passed',
             'grade' => 'requiredif:pkl_status,passed|nullable|integer',
             'scan_pkl' => 'requiredif:pkl_status,passed|nullable|integer',
+            'semester_value' => 'required|integer',
         ]);
 
         // if error
@@ -211,6 +214,7 @@ class PklController extends Controller
         }
 
         $pkl = [
+            "semester_value" => $request->semester,
             "pkl_status" => $request->pkl_status,
             "grade" => $request->grade,
             "scan_pkl" => $request->scan_pkl,

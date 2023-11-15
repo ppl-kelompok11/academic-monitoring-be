@@ -107,7 +107,7 @@ class IrsController extends Controller
     {
         // validate incoming request
         $this->validate($request, [
-            'semester' => 'required|integer',
+            'semester_value' => 'required|integer',
             'sks' => 'required|integer',
             'scan_irs' => 'required|string',
         ]);
@@ -137,7 +137,7 @@ class IrsController extends Controller
             ->first();
 
         $irs = [
-            "semester" => $request->semester,
+            "semester_value" => $request->semester,
             "sks" => $request->sks,
             "scan_irs" => $request->scan_irs,
             "student_id" => $student_id,
@@ -189,7 +189,7 @@ class IrsController extends Controller
             ->first();
 
         $irs = [
-            "semester" => $request->semester_value,
+            "semester_value" => $request->semester_value,
             "sks" => $request->sks,
             "verification_status" => "01",
             "scan_irs" => $request->scan_irs,

@@ -110,6 +110,7 @@ class SkripsiController extends Controller
             'skripsi_status' => 'required|string|in:not_taken,ongoing,passed',
             'grade' => 'requiredif:skripsi_status,passed|string',
             'scan_skripsi' => 'requiredif:skripsi_status,passed|string',
+            "semester_value" => 'required|integer',
         ]);
 
         // if error
@@ -147,6 +148,7 @@ class SkripsiController extends Controller
         }
 
         $skripsi = [
+            "semester_value" => $request->semester_value,
             "skripsi_status" => $request->skripsi_status,
             "grade" => $request->grade,
             "scan_skripsi" => $request->scan_skripsi,
@@ -174,6 +176,7 @@ class SkripsiController extends Controller
             'skripsi_status' => 'required|string|in:not_taken,ongoing,passed',
             'grade' => 'requiredif:skripsi_status,passed|nullable|integer',
             'scan_skripsi' => 'requiredif:skripsi_status,passed|nullable|integer',
+            "semester_value" => 'required|integer',
         ]);
 
         // if error
@@ -211,6 +214,7 @@ class SkripsiController extends Controller
         }
 
         $skripsi = [
+            "semester_value" => $request->semester_value,
             "skripsi_status" => $request->skripsi_status,
             "grade" => $request->grade,
             "scan_skripsi" => $request->scan_skripsi,
