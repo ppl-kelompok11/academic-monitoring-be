@@ -80,6 +80,7 @@ class LectureController extends Controller
             $lecture_id = DB::table("lecture")->insertGetId($lecture);
             $user = [
                 "email" => $request->email,
+                "username" => $request->nip,
                 "password" => bcrypt($request->password),
                 "ref_id" => $lecture_id,
                 "role_id" => 3,

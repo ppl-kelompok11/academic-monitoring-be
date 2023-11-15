@@ -103,7 +103,7 @@ class StudentsController extends Controller
         // remove space
         // $name = str_replace(' ', '', $request->name);
         $user = [
-            "email" => $request->nim,
+            "username" => $request->nim,
             "password" => bcrypt('123456'),
             "ref_id" => $student_id,
             "role_id" => 2,
