@@ -82,12 +82,27 @@ class IrsController extends Controller
 
     public function show($id)
     {
-        $student_id = Auth::user()->ref_id;
+        if (Auth::user()->role_id == 2) {
+            $student_id = Auth::user()->ref_id;
+        }
+        if (Auth::user()->role_id == 3) {
+            $lecture_id = Auth::user()->ref_id;
+        }
 
         $irs = DB::table('irs')
-            ->where('id', $id)
-            ->where('student_id', $student_id)
-            ->first();
+            ->select("irs.*", "students.name", "students.nim")
+            ->leftJoin("students", "irs.student_id", "=", "students.id")
+            ->where('irs.id', $id);
+
+        if (Auth::user()->role_id == 2) {
+            $irs = $irs->where('irs.student_id', $student_id);
+        }
+        if (Auth::user()->role_id == 3) {
+            $irs = $irs->where('students.lecture_id', $lecture_id);
+        }
+
+        $irs = $irs->first();
+
 
         if (!$irs) return response()->json([
             'success' => false,

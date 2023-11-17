@@ -81,17 +81,26 @@ class PklController extends Controller
 
     public function show($id)
     {
-        $student_id = Auth::user()->ref_id;
+        if (Auth::user()->role_id == 2) {
+            $student_id = Auth::user()->ref_id;
+        }
+        if (Auth::user()->role_id == 3) {
+            $lecture_id = Auth::user()->ref_id;
+        }
 
         $pkl = DB::table('pkl')
-            ->where('id', $id)
-            ->where('student_id', $student_id)
-            ->first();
+            ->select("pkl.*", "students.name", "students.nim")
+            ->leftJoin("students", "pkl.student_id", "=", "students.id")
+            ->where('pkl.id', $id);
 
-        if (!$pkl) return response()->json([
-            'success' => false,
-            'message' => 'Data tidak ditemukan'
-        ], 404);
+        if (Auth::user()->role_id == 2) {
+            $pkl = $pkl->where('pkl.student_id', $student_id);
+        }
+        if (Auth::user()->role_id == 3) {
+            $pkl = $pkl->where('students.lecture_id', $lecture_id);
+        }
+
+        $pkl = $pkl->first();
 
         $pkl->scan_pkl = [
             "filename" => substr($pkl->scan_pkl, strrpos($pkl->scan_pkl, '/') + 1),

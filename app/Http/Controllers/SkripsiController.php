@@ -81,12 +81,26 @@ class SkripsiController extends Controller
 
     public function show($id)
     {
-        $student_id = Auth::user()->ref_id;
+        if (Auth::user()->role_id == 2) {
+            $student_id = Auth::user()->ref_id;
+        }
+        if (Auth::user()->role_id == 3) {
+            $lecture_id = Auth::user()->ref_id;
+        }
 
         $skripsi = DB::table('skripsi')
-            ->where('id', $id)
-            ->where('student_id', $student_id)
-            ->first();
+            ->select("skripsi.*", "students.name", "students.nim")
+            ->leftJoin("students", "skripsi.student_id", "=", "students.id")
+            ->where('id', $id);
+
+        if (Auth::user()->role_id == 2) {
+            $skripsi = $skripsi->where('skripsi.student_id', $student_id);
+        }
+        if (Auth::user()->role_id == 3) {
+            $skripsi = $skripsi->where('students.lecture_id', $lecture_id);
+        }
+
+        $skripsi = $skripsi->first();
 
         if (!$skripsi) return response()->json([
             'success' => false,

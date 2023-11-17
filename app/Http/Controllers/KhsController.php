@@ -82,12 +82,26 @@ class KhsController extends Controller
 
     public function show($id)
     {
-        $student_id = Auth::user()->ref_id;
+        if (Auth::user()->role_id == 2) {
+            $student_id = Auth::user()->ref_id;
+        }
+        if (Auth::user()->role_id == 3) {
+            $lecture_id = Auth::user()->ref_id;
+        }
 
         $khs = DB::table('khs')
-            ->where('id', $id)
-            ->where('student_id', $student_id)
-            ->first();
+            ->select("khs.*", "students.name", "students.nim")
+            ->leftJoin("students", "khs.student_id", "=", "students.id")
+            ->where('khs.id', $id);
+
+        if (Auth::user()->role_id == 2) {
+            $khs = $khs->where('khs.student_id', $student_id);
+        }
+        if (Auth::user()->role_id == 3) {
+            $khs = $khs->where('students.lecture_id', $lecture_id);
+        }
+
+        $khs = $khs->first();
 
         if (!$khs) return response()->json([
             'success' => false,

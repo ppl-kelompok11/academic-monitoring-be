@@ -257,7 +257,7 @@ class StudentsController extends Controller
                 $join->on('skripsi.semester_value', '=', 'semester.value')
                     ->where('skripsi.student_id', '=', $id);
             })
-            ->select('semester.value as semester_value', 'irs.verification_status as irs_verification_status', 'khs.verification_status as khs_verification_status', 'pkl.verification_status as pkl_verification_status', 'skripsi.verification_status as skripsi_verification_status')
+            ->select('semester.value as semester_value', 'irs.id as irs_id', 'irs.verification_status as irs_verification_status', 'khs.id as khs_id', 'khs.verification_status as khs_verification_status', 'pkl.id as pkl_id', 'pkl.verification_status as pkl_verification_status', 'skripsi.id as skripsi_id', 'skripsi.verification_status as skripsi_verification_status')
             ->orderBy('semester.value', 'asc')
             ->get();
 
