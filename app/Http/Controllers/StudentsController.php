@@ -47,14 +47,13 @@ class StudentsController extends Controller
         // custom filter
         $skripsi_status = $request->skripsi_status;
         if ($skripsi_status) {
-            $student = $student->leftJoin('skripsi', 'students.id', '=', 'skripsi.student_id')
-                ->select('skripsi.grade');
+            $student = $student->leftJoin('skripsi', 'students.id', '=', 'skripsi.student_id');
             if ($skripsi_status == "graduate") {
                 $student = $student->where('skripsi.verification_status', '02')->select('students.*', 'users.email', 'skripsi.grade');
             }
 
             if ($skripsi_status == "not_graduate") {
-                $student = $student->where('skripsi.verification_status', '!=', '02')->orWhereNull('skripsi.verification_status');
+                $student = $student->where('skripsi.verification_status', '!=', '02')->orWhereNull('skripsi.verification_status')->select('students.*', 'users.email', 'skripsi.grade');
             }
         }
 
@@ -65,7 +64,7 @@ class StudentsController extends Controller
                 $student = $student->where('pkl.verification_status', '02')->select('students.*', 'users.email', 'pkl.grade');
             }
             if ($pkl_status == "not_graduate") {
-                $student = $student->where('pkl.verification_status', '!=', '02')->orWhereNull('pkl.verification_status');
+                $student = $student->where('pkl.verification_status', '!=', '02')->orWhereNull('pkl.verification_status')->select('students.*', 'users.email', 'pkl.grade');
             }
         }
 
