@@ -36,7 +36,7 @@ class StudentsController extends Controller
         }
 
         // start filter
-        $filters = ["status"];
+        $filters = ["status", "start_education_year"];
 
         foreach ($filters as $filter) {
             if ($request->$filter) {
@@ -47,9 +47,10 @@ class StudentsController extends Controller
         // custom filter
         $skripsi_status = $request->skripsi_status;
         if ($skripsi_status) {
-            $student = $student->leftJoin('skripsi', 'students.id', '=', 'skripsi.student_id');
+            $student = $student->leftJoin('skripsi', 'students.id', '=', 'skripsi.student_id')
+                ->select('skripsi.grade');
             if ($skripsi_status == "graduate") {
-                $student = $student->where('skripsi.verification_status', '02');
+                $student = $student->where('skripsi.verification_status', '02')->select('students.*', 'users.email', 'skripsi.grade');
             }
 
             if ($skripsi_status == "not_graduate") {
@@ -61,7 +62,7 @@ class StudentsController extends Controller
         if ($pkl_status) {
             $student = $student->leftJoin('pkl', 'students.id', '=', 'pkl.student_id');
             if ($pkl_status == "graduate") {
-                $student = $student->where('pkl.verification_status', '02');
+                $student = $student->where('pkl.verification_status', '02')->select('students.*', 'users.email', 'pkl.grade');
             }
             if ($pkl_status == "not_graduate") {
                 $student = $student->where('pkl.verification_status', '!=', '02')->orWhereNull('pkl.verification_status');

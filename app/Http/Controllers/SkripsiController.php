@@ -91,7 +91,7 @@ class SkripsiController extends Controller
         $skripsi = DB::table('skripsi')
             ->select("skripsi.*", "students.name", "students.nim")
             ->leftJoin("students", "skripsi.student_id", "=", "students.id")
-            ->where('id', $id);
+            ->where('skripsi.id', $id);
 
         if (Auth::user()->role_id == 2) {
             $skripsi = $skripsi->where('skripsi.student_id', $student_id);
