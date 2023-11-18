@@ -31,6 +31,44 @@ class StudentsController extends Controller
             });
         }
 
+        if (Auth::user()->role_id == 3) {
+            $student = $student->where('lecture_id', Auth::user()->ref_id);
+        }
+
+        // start filter
+        $filters = ["status"];
+
+        foreach ($filters as $filter) {
+            if ($request->$filter) {
+                $student = $student->where($filter, $request->$filter);
+            }
+        }
+
+        // custom filter
+        $skripsi_status = $request->skripsi_status;
+        if ($skripsi_status) {
+            $student = $student->leftJoin('skripsi', 'students.id', '=', 'skripsi.student_id');
+            if ($skripsi_status == "graduate") {
+                $student = $student->where('skripsi.verification_status', '02');
+            }
+
+            if ($skripsi_status == "not_graduate") {
+                $student = $student->where('skripsi.verification_status', '!=', '02')->orWhereNull('skripsi.verification_status');
+            }
+        }
+
+        $pkl_status = $request->pkl_status;
+        if ($pkl_status) {
+            $student = $student->leftJoin('pkl', 'students.id', '=', 'pkl.student_id');
+            if ($pkl_status == "graduate") {
+                $student = $student->where('pkl.verification_status', '02');
+            }
+            if ($pkl_status == "not_graduate") {
+                $student = $student->where('pkl.verification_status', '!=', '02')->orWhereNull('pkl.verification_status');
+            }
+        }
+
+
         $student = $student->paginate(10);
 
         return response()->json([

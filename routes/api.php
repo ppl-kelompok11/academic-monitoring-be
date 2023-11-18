@@ -11,6 +11,7 @@ use App\Http\Controllers\KhsController;
 use App\Http\Controllers\PklController;
 use App\Http\Controllers\SkripsiController;
 use App\Http\Controllers\LectureController;
+use App\Http\Controllers\RecapController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -160,5 +161,18 @@ Route::group(
         Route::post("/upload", [FileController::class, "upload"]);
         Route::get("/temp-file/{originalname}", [FileController::class, "getTempFile"]);
         Route::get("/{model}/{fileName}", [FileController::class, "getFile"]);
+    }
+);
+
+// rekap
+Route::group(
+    [
+        'middleware' => 'jwtmiddleware',
+        'prefix' => 'recap'
+    ],
+    function ($router) {
+        Route::get('/pkl', [RecapController::class, 'recapPkl']);
+        Route::get('/skripsi', [RecapController::class, 'recapSkripsi']);
+        Route::get('/status', [RecapController::class, 'recapStatus']);
     }
 );
