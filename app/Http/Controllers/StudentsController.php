@@ -35,14 +35,7 @@ class StudentsController extends Controller
             $student = $student->where('lecture_id', Auth::user()->ref_id);
         }
 
-        // start filter
-        $filters = ["status", "start_education_year"];
 
-        foreach ($filters as $filter) {
-            if ($request->$filter) {
-                $student = $student->where($filter, $request->$filter);
-            }
-        }
 
         // custom filter
         $skripsi_status = $request->skripsi_status;
@@ -68,6 +61,14 @@ class StudentsController extends Controller
             }
         }
 
+        // start filter
+        $filters = ["status", "start_education_year"];
+
+        foreach ($filters as $filter) {
+            if ($request->$filter) {
+                $student = $student->where($filter, $request->$filter);
+            }
+        }
 
         $student = $student->paginate(10);
 
