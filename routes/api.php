@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CitiesController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FileController;
 use App\Http\Controllers\ProvinceController;
 use App\Http\Controllers\SemesterController;
@@ -174,5 +175,15 @@ Route::group(
         Route::get('/pkl', [RecapController::class, 'recapPkl']);
         Route::get('/skripsi', [RecapController::class, 'recapSkripsi']);
         Route::get('/status', [RecapController::class, 'recapStatus']);
+    }
+);
+
+Route::group(
+    [
+        'middleware' => 'jwtmiddleware',
+        'prefix' => 'dashboard'
+    ],
+    function ($router) {
+        Route::get('/students/overview', [DashboardController::class, 'studentOverview']);
     }
 );
