@@ -25,6 +25,7 @@ class DashboardController extends Controller
             ->where('students.id', $student_id)->first();
 
         $dashboard['lecture_name'] = $student->lecture_name;
+        $dashboard['student_status'] = $student->status;
         return response()->json(
             [
                 'success' => true,
