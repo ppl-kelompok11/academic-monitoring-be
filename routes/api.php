@@ -184,6 +184,8 @@ Route::group(
         'prefix' => 'dashboard'
     ],
     function ($router) {
-        Route::get('/students/overview', [DashboardController::class, 'studentOverview']);
+        Route::get('/students/profile-overview', [DashboardController::class, 'profileOverview']);
+        Route::get('/lecture/student-overview', [DashboardController::class, 'studentOverview']);
+        Route::get('/lecture/student-irs', [DashboardController::class, 'studentIrs']);
     }
 );
