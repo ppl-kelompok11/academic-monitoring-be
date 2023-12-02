@@ -69,8 +69,12 @@ class StudentsController extends Controller
                 $student = $student->where($filter, $request->$filter);
             }
         }
+        $limit = 10;
+        if ($request->limit) {
+            $limit = $request->limit;
+        }
 
-        $student = $student->paginate(10);
+        $student = $student->paginate($limit);
 
         return response()->json([
             'success' => true,
