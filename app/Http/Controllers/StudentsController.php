@@ -105,6 +105,7 @@ class StudentsController extends Controller
         foreach ($field_uploads as $field_upload) {
             if ($student->$field_upload) {
                 $student->$field_upload = [
+                    "filename" => substr($student->photo, strrpos($student->photo, '/') + 1),
                     "url" => env('APP_URL') . "/api/file/" . $student->$field_upload,
                     "path" => $student->$field_upload,
                 ];
