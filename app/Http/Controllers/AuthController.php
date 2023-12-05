@@ -36,6 +36,9 @@ class AuthController extends Controller
         if (!$user) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
+        // dd($user);
+        // get ref table
+        $user->name = DB::table($user->ref_table)->select('name')->where('id', $user->ref_id)->first()->name;
 
         // unset email
         if (isset($credentials['email'])) {
@@ -57,7 +60,7 @@ class AuthController extends Controller
             'success' => true,
             'message' => 'Login success',
             'token' => $token,
-            'profile' => auth()->user()
+            'profile' => $user
         ]);
     }
 
