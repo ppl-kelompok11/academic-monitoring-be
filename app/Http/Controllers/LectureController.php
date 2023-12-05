@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
 
 class LectureController extends Controller
 {
@@ -41,6 +42,18 @@ class LectureController extends Controller
             ->where('role_id', 3)
             ->where('lecture.id', $id)
             ->first();
+
+        $field_uploads = ["photo"];
+        // add url to field_uploads
+        foreach ($field_uploads as $field_upload) {
+            if ($student->$field_upload) {
+                $student->$field_upload = [
+                    "filename" => substr($student->photo, strrpos($student->photo, '/') + 1),
+                    "url" => env('APP_URL') . "/api/file/" . $student->$field_upload,
+                    "path" => $student->$field_upload,
+                ];
+            }
+        }
         return response()->json($student);
     }
 
@@ -102,29 +115,67 @@ class LectureController extends Controller
     }
     public function update(Request $request)
     {
-        if (Auth::user()->role_id == 2) {
+        if (Auth::user()->role_id == 3) {
             $id = Auth::user()->ref_id;
         } else {
             $id = $request->id;
         }
-        $this->validate($request, [
-            'nip' => 'required|string|unique:students,nim,' . $id,
-            'nidn' => 'required|string|unique:students,nim,' . $id,
-            'province_id' => 'nullable|integer',
-            'city_id' => 'nullable|integer',
-            'work_start_date' => 'nullable|integer',
+        $user = DB::table('users')->where('ref_id', $id)->where('role_id', 3)->first();
+        $validator = Validator::make($request->all(), [
+            'nip' => 'required|string|unique:lecture,nip,' . $id,
+            'name' => 'required|string',
+            'email' => 'required|string|unique:users,email,' . $user->id,
+            'nidn' => 'required|string|unique:lecture,nidn,' . $id,
+            'province_id' => 'nullable|integer|exists:provinces,id',
+            'city_id' => 'nullable|integer|exists:cities,id',
+            'work_start_date' => 'nullable|date',
             'photo' => 'nullable|string',
+            'phone' => 'nullable|string',
+            'address' => 'nullable|string',
         ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => $validator->errors()->first(),
+            ], 422);
+        }
+
+        $field_uploads = ["photo"];
+        // check file scan irs is exist
+        foreach ($field_uploads as $field_upload) {
+            $file = $request->$field_upload;
+            if ($file) {
+                if (!Storage::exists($file)) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'File ' . $field_upload . ' not found'
+                    ], 422);
+                }
+
+                // move file from tmp to storage
+                $original_name = pathinfo(storage_path($file), PATHINFO_FILENAME);
+                $ext = pathinfo(storage_path($file), PATHINFO_EXTENSION);
+                $new_path = 'lecture' . '/' . $original_name . '.' . $ext;
+                Storage::move($file, $new_path);
+                $request->$field_upload = $new_path;
+            }
+        }
+
         $data = [
             "nip" => $request->nip,
             "nidn" => $request->nidn,
             "province_id" => $request->province_id,
             "city_id" => $request->city_id,
             "work_start_date" => $request->work_start_date,
+            "address" => $request->address,
             "photo" => $request->photo,
+            "phone" => $request->phone,
             "updated_by" => Auth::user()->id,
         ];
         DB::table("lecture")->where('id', $id)->update($data);
+        DB::table("users")->where('ref_id', $id)->where('role_id', 3)->update([
+            "email" => $request->email,
+        ]);
         return response()->json([
             'success' => true,
             'message' => 'Lecture successfully updated'
