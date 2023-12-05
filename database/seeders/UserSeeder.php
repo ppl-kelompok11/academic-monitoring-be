@@ -17,9 +17,20 @@ class UserSeeder extends Seeder
     {
         //
         $data = [
-            "email" => "admin@gmail.com",
-            "password" => bcrypt("Admin1234!"),
-            "role_id" => 1,
+            [
+                "email" => "admin@gmail.com",
+                "password" => bcrypt("Admin1234!"),
+                "role_id" => 1,
+                "ref_id" => 1,
+                "ref_table" => "admin",
+            ],
+            [
+                "email" => "if.undip@gmail.com",
+                "password" => bcrypt("ifundip1234!"),
+                "role_id" => 4,
+                "ref_id" => 1,
+                "ref_table" => "department",
+            ]
         ];
         DB::table("users")->upsert($data, ["email"]);
     }

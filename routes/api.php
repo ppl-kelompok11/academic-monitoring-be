@@ -3,6 +3,8 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CitiesController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\AdminsController;
 use App\Http\Controllers\FileController;
 use App\Http\Controllers\ProvinceController;
 use App\Http\Controllers\SemesterController;
@@ -49,6 +51,29 @@ Route::group(
         Route::post('/', [StudentsController::class, 'store']);
         Route::put('/', [StudentsController::class, 'update']);
         Route::get('/academic/{id}', [StudentsController::class, 'academic']);
+    }
+);
+
+// department routes
+Route::group(
+    [
+        'middleware' => 'jwtmiddleware',
+        'prefix' => 'department'
+    ],
+    function ($router) {
+        Route::get('/{id}', [DepartmentController::class, 'show']);
+        Route::put('/', [DepartmentController::class, 'update']);
+    }
+);
+
+Route::group(
+    [
+        'middleware' => 'jwtmiddleware',
+        'prefix' => 'admins'
+    ],
+    function ($router) {
+        Route::get('/{id}', [AdminsController::class, 'show']);
+        Route::put('/', [AdminsController::class, 'update']);
     }
 );
 

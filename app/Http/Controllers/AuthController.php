@@ -38,8 +38,16 @@ class AuthController extends Controller
         }
 
         // unset email
-        unset($credentials['email']);
-        $credentials['username'] = $user->username;
+        if (isset($credentials['email'])) {
+            unset($credentials['username']);
+        }
+
+        if (isset($user->username)) {
+            unset($credentials['email']);
+            $credentials['username'] = $user->username;
+        }
+
+
         if (!$token = auth()->attempt($credentials)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
