@@ -121,8 +121,8 @@ class SkripsiController extends Controller
         $student_id = Auth::user()->ref_id;
         // validate incoming request
         $validator = Validator::make($request->all(),  [
-            'grade' => 'requiredif:skripsi_status,passed|string',
-            'scan_skripsi' => 'requiredif:skripsi_status,passed|string',
+            'grade' => 'required|numeric',
+            'scan_skripsi' => 'required|string',
             "semester_value" => 'required|numeric',
         ]);
 
