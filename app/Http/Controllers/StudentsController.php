@@ -362,4 +362,29 @@ class StudentsController extends Controller
             ], 422);
         }
     }
+    public function delete(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'id' => 'required|integer|exists:students,id',
+            ]);
+            if ($validator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $validator->errors()->first(),
+                ], 422);
+            }
+            DB::table("irs")->where('student_id', $request->id)->delete();
+            DB::table("khs")->where('student_id', $request->id)->delete();
+            DB::table("pkl")->where('student_id', $request->id)->delete();
+            DB::table("skripsi")->where('student_id', $request->id)->delete();
+            DB::table('users')->where('ref_id', $request->id)->where('role_id', 3)->delete();
+            DB::table('students')->where('id', $request->id)->delete();
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Internal Server Error',
+            ], 500);
+        }
+    }
 }

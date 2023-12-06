@@ -184,4 +184,28 @@ class LectureController extends Controller
             'message' => 'Lecture successfully updated'
         ], 201);
     }
+    public function delete(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'id' => 'required|integer|exists:lecture,id',
+            ]);
+            if ($validator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $validator->errors()->first(),
+                ], 422);
+            }
+            DB::table("students")->where('lecture_id', $request->id)->update([
+                "lecture_id" => null,
+            ]);
+            DB::table('users')->where('ref_id', $request->id)->where('role_id', 3)->delete();
+            DB::table('lecture')->where('id', $request->id)->delete();
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Internal Server Error',
+            ], 500);
+        }
+    }
 }

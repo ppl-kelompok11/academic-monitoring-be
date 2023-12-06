@@ -240,4 +240,28 @@ class IrsController extends Controller
             'message' => 'Status Berhasil Diperbarui'
         ], 200);
     }
+    public function delete(Request $request)
+    {
+        // get ref id
+        $student_id = Auth::user()->ref_id;
+        // validate incoming request
+        $this->validate($request, [
+            'id' => 'required|integer|exists:irs,id',
+        ]);
+
+        $irs = DB::table("irs")->where('id', $request->id)->where('student_id', $student_id)->first();
+
+        if (!$irs) return response()->json([
+            'success' => false,
+            'message' => 'Data not found'
+        ], 422);
+
+        DB::table("khs")->where('irs_id', $request->id)->delete();
+        DB::table("irs")->where('id', $request->id)->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Data Successfully Deleted'
+        ], 200);
+    }
 }

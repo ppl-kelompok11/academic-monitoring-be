@@ -50,6 +50,7 @@ Route::group(
         Route::get('/{id}', [StudentsController::class, 'show']);
         Route::post('/', [StudentsController::class, 'store']);
         Route::put('/', [StudentsController::class, 'update']);
+        Route::delete('/', [StudentsController::class, 'delete']);
         Route::post('/import', [StudentsController::class, 'excelImport']);
         Route::get('/academic/{id}', [StudentsController::class, 'academic']);
     }
@@ -89,6 +90,7 @@ Route::group(
         Route::get('/{id}', [LectureController::class, 'show']);
         Route::post('/', [LectureController::class, 'store']);
         Route::put('/', [LectureController::class, 'update']);
+        Route::delete('/', [lectureController::class, 'delete']);
     }
 );
 Route::group(
@@ -132,6 +134,7 @@ Route::group(
         Route::post('/', [IrsController::class, 'store']);
         Route::put('/', [IrsController::class, 'update']);
         Route::put('/validate', [IrsController::class, 'validation']);
+        Route::delete('/', [IrsController::class, 'delete']);
     }
 );
 
@@ -147,6 +150,7 @@ Route::group(
         Route::post('/', [KhsController::class, 'store']);
         Route::put('/', [KhsController::class, 'update']);
         Route::put('/validate', [KhsController::class, 'validation']);
+        Route::delete('/', [KhsController::class, 'delete']);
     }
 );
 
@@ -162,6 +166,7 @@ Route::group(
         Route::post('/', [PklController::class, 'store']);
         Route::put('/', [PklController::class, 'update']);
         Route::put('/validate', [PklController::class, 'validation']);
+        Route::delete('/', [PklController::class, 'delete']);
     }
 );
 
@@ -177,6 +182,7 @@ Route::group(
         Route::post('/', [SkripsiController::class, 'store']);
         Route::put('/', [SkripsiController::class, 'update']);
         Route::put('/validate', [SkripsiController::class, 'validation']);
+        Route::delete('/', [SkripsiController::class, 'delete']);
     }
 );
 

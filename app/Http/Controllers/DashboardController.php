@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
@@ -45,6 +46,11 @@ class DashboardController extends Controller
                     'message' => $validator->errors()->first(),
                 ], 422);
             }
+            $filter = "";
+            if (Auth::user()->role_id == 3) {
+                $lecture_id = Auth::user()->ref_id;
+                $filter = "AND lecture_id = $lecture_id";
+            }
             $dashboard = DB::selectOne("SELECT 
                             count(*) as total_student,
                             count(case when sk.verification_status = '02' then 1 end) as total_graduate,
@@ -60,6 +66,7 @@ class DashboardController extends Controller
                             LEFT JOIN skripsi sk
                             ON sk.student_id = s.id AND sk.verification_status = '02' AND k.semester_value = sk.semester_value
                             WHERE s.start_education_year = " . $request->start_education_year . "
+                            $filter
                             ");
         } catch (\Exception $e) {
             return response()->json(
@@ -91,6 +98,13 @@ class DashboardController extends Controller
                     'message' => $validator->errors()->first(),
                 ], 422);
             }
+
+            $filter = "";
+            if (Auth::user()->role_id == 3) {
+                $lecture_id = Auth::user()->ref_id;
+                $filter = "AND lecture_id = $lecture_id";
+            }
+
             $list_irs = DB::select("SELECT 
                             k.semester_value,
                             round(avg(case when k.ip is not null then ip else 0 end),2) as average_ip
@@ -100,6 +114,7 @@ class DashboardController extends Controller
                             LEFT JOIN students s
                             ON s.id = k.student_id
                             WHERE s.start_education_year = " . $request->start_education_year . "
+                            $filter
                             GROUP BY k.semester_value
                             ORDER BY k.semester_value ASC
 

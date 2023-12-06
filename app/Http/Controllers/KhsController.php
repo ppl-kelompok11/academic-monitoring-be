@@ -126,6 +126,8 @@ class KhsController extends Controller
             'sks' => 'required|integer',
             'ip' => 'required|numeric',
             'scan_khs' => 'required|string',
+            'ip_kumulatif' => 'required|numeric|between:0,4',
+            'sks_kumulatif' => 'required|integer',
         ]);
 
         $khs = DB::table("khs")->where('student_id', $student_id)->where('irs_id', $request->irs_id)->first();
@@ -148,9 +150,6 @@ class KhsController extends Controller
         $irs = DB::table('irs')
             ->where('id', $request->irs_id)
             ->first();
-
-        $last_khs = DB::table('khs')->where('student_id', $student_id)->orderBy('id', 'desc')->first();
-        $count_khs = DB::table('khs')->where('student_id', $student_id)->count();
 
 
         $field_uploads = ["scan_khs"];
@@ -177,8 +176,8 @@ class KhsController extends Controller
             "sks" => $request->sks,
             "ip" => $request->ip,
             "scan_khs" => $request->scan_khs,
-            "sks_kumulatif" => $last_khs ? $last_khs->sks_kumulatif + $request->sks : $request->sks,
-            "ip_kumulatif" => $last_khs ? ($last_khs->ip_kumulatif * $count_khs + $request->ip) / ($count_khs + 1) : $request->ip,
+            "sks_kumulatif" => $request->sks_kumulatif,
+            "ip_kumulatif" => $request->ip_kumulatif,
             "semester_value" => $irs->semester_value,
             "student_id" => $student_id,
             "college_year_id" => $irs->college_year_id,
@@ -205,6 +204,8 @@ class KhsController extends Controller
             'sks' => 'required|integer',
             'ip' => 'required|numeric',
             'scan_khs' => 'required|string',
+            'ip_kumulatif' => 'required|numeric|between:0,4',
+            'sks_kumulatif' => 'required|integer',
         ]);
 
         $khs = DB::table("khs")->where('student_id', $student_id)->where('irs_id', $request->irs_id)->whereNotIn('id', [$request->id])->first();
@@ -227,9 +228,6 @@ class KhsController extends Controller
         $irs = DB::table('irs')
             ->where('id', $request->irs_id)
             ->first();
-
-        $last_khs = DB::table('khs')->where('student_id', $student_id)->orderBy('id', 'desc')->first();
-        $count_khs = DB::table('khs')->where('student_id', $student_id)->count();
 
 
         $field_uploads = ["scan_khs"];
@@ -256,8 +254,8 @@ class KhsController extends Controller
             "sks" => $request->sks,
             "ip" => $request->ip,
             "scan_khs" => $request->scan_khs,
-            "sks_kumulatif" => $last_khs ? $last_khs->sks_kumulatif + $request->sks : $request->sks,
-            "ip_kumulatif" => $last_khs ? ($last_khs->ip_kumulatif * $count_khs + $request->ip) / ($count_khs + 1) : $request->ip,
+            "sks_kumulatif" => $request->sks_kumulatif,
+            "ip_kumulatif" => $request->ip_kumulatif,
             "semester_value" => $irs->semester_value,
             "student_id" => $student_id,
             "college_year_id" => $irs->college_year_id,
@@ -293,6 +291,29 @@ class KhsController extends Controller
             'success' => true,
             'data' => $khs,
             'message' => 'Status Berhasil Diperbarui'
+        ], 200);
+    }
+    public function delete(Request $request)
+    {
+        // get ref id
+        $student_id = Auth::user()->ref_id;
+        // validate incoming request
+        $this->validate($request, [
+            'id' => 'required|integer|exists:khs,id',
+        ]);
+
+        $khs = DB::table("khs")->where('id', $request->id)->where('student_id', $student_id)->first();
+
+        if (!$khs) return response()->json([
+            'success' => false,
+            'message' => 'Data not found'
+        ], 422);
+
+        DB::table("khs")->where('id', $request->id)->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Data Successfully Deleted'
         ], 200);
     }
 }

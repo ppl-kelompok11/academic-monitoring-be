@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class RecapController extends Controller
@@ -10,13 +11,19 @@ class RecapController extends Controller
     //
     public function recapPkl()
     {
+        $filter = "";
+        if (Auth::user()->role_id == 3) {
+            $lecture_id = Auth::user()->ref_id;
+            $filter = "WHERE lecture_id = $lecture_id";
+        }
         $recap_skripsi = DB::select("SELECT 
                         start_education_year,
                         count(*) FILTER (WHERE pkl.verification_status = '02') AS graduate,
                         count(*) FILTER (WHERE pkl.verification_status != '02' OR pkl.verification_status is null) AS not_graduate
                         FROM students s
                         LEFT JOIN pkl
-                        ON pkl.student_id = s.id 
+                        ON pkl.student_id = s.id
+                        $filter 
                         GROUP BY start_education_year
                         LIMIT 7
                         ");
@@ -29,6 +36,11 @@ class RecapController extends Controller
     }
     public function recapSkripsi()
     {
+        $filter = "";
+        if (Auth::user()->role_id == 3) {
+            $lecture_id = Auth::user()->ref_id;
+            $filter = "WHERE lecture_id = $lecture_id";
+        }
         $recap_skripsi = DB::select("SELECT 
                         start_education_year,
                         count(*) FILTER (WHERE skripsi.verification_status = '02') AS graduate,
@@ -36,6 +48,7 @@ class RecapController extends Controller
                         FROM students s
                         LEFT JOIN skripsi
                         ON skripsi.student_id = s.id 
+                        $filter
                         GROUP BY start_education_year
                         ORDER BY s.start_education_year DESC
                         LIMIT 7
@@ -49,6 +62,11 @@ class RecapController extends Controller
     }
     public function recapStatus()
     {
+        $filter = "";
+        if (Auth::user()->role_id == 3) {
+            $lecture_id = Auth::user()->ref_id;
+            $filter = "WHERE lecture_id = $lecture_id";
+        }
         $recap_skripsi = DB::select("SELECT 
                         start_education_year,
                         count(*) FILTER (WHERE s.status = '00') AS active,
@@ -61,6 +79,7 @@ class RecapController extends Controller
                         FROM students s
                         LEFT JOIN skripsi
                         ON skripsi.student_id = s.id 
+                        $filter
                         GROUP BY start_education_year
                         ORDER BY s.start_education_year DESC
                         LIMIT 7
