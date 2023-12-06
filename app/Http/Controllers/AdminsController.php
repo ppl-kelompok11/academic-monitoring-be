@@ -22,7 +22,7 @@ class AdminsController extends Controller
             ->leftJoin('users', 'admins.id', '=', 'users.ref_id')
             ->leftJoin('provinces', 'admins.province_id', '=', 'provinces.id')
             ->leftJoin('cities', 'admins.city_id', '=', 'cities.id')
-            ->where('role_id', 4)
+            ->where('role_id', 1)
             ->where('admins.id', $id)
             ->first();
 
