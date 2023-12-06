@@ -180,6 +180,7 @@ class PklController extends Controller
         $student_id = Auth::user()->ref_id;
         // validate incoming request
         $validator = Validator::make($request->all(),  [
+            'id' => 'required|integer|exists:pkl,id',
             'grade' => 'required|string',
             'scan_pkl' => 'required|string',
             'semester_value' => 'required|integer',
