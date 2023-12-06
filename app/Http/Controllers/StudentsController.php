@@ -334,7 +334,7 @@ class StudentsController extends Controller
                     "start_education_year" => $item[2],
                     "entrance_code" => $item[3],
                     "lecture_id" => $lecture->id,
-                    "status" => 00,
+                    "status" => "00",
                     "created_by" => Auth::user()->id,
                     "updated_by" => Auth::user()->id,
                 ];
