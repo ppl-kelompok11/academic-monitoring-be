@@ -65,8 +65,8 @@ class DashboardController extends Controller
                             count(case when sk.verification_status = '02' then 1 end) as total_graduate,
                             round(avg(case when sk.verification_status = '02' then k.semester_value end),2) as average_semester_graduate,
                             count(case when sk.verification_status = '02' AND k.ip >= 3.51 then 1 end) as total_graduate_cumlaude,
-                            round(avg(case when kh.verification_status = '02' then k.ip end),2) as average_ip_graduate,
-                            round(avg(case when kh.verification_status = '02' then k.sks end),0) as average_sks_graduate,
+                            round(avg(case when k.verification_status = '02' then k.ip end),2) as average_ip_graduate,
+                            round(avg(case when k.verification_status = '02' then k.sks end),0) as average_sks_graduate,
                             round(avg(case when sk.verification_status = '02' then k.ip_kumulatif end),2) as average_ip_kumulatif_graduate,
                             round(avg(case when sk.verification_status = '02' then k.sks_kumulatif end),0) as average_sks_kumulatif_graduate
                             FROM students s
