@@ -25,6 +25,7 @@ class RecapController extends Controller
                         ON pkl.student_id = s.id
                         $filter 
                         GROUP BY start_education_year
+                        ORDER BY s.start_education_year DESC
                         LIMIT 7
                         ");
         return response()->json(
