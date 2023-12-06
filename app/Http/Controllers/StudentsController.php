@@ -19,7 +19,7 @@ class StudentsController extends Controller
     public function index(Request $request)
     {
         $student = DB::table('students')
-            ->select('students.*', 'users.email', 'users.id as user_id')
+            ->select('students.*', 'users.email', 'users.id as user_id', 'users.active as active')
             ->join('users', 'students.id', '=', 'users.ref_id')
             ->where('role_id', 2);
 
