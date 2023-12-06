@@ -97,6 +97,7 @@ class LectureController extends Controller
                 "password" => bcrypt($request->password),
                 "ref_id" => $lecture_id,
                 "role_id" => 3,
+                "ref_table" => "lecture",
             ];
             DB::table("users")->insert($user);
 

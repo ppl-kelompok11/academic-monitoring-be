@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class StudentsController extends Controller
 {
@@ -152,6 +153,7 @@ class StudentsController extends Controller
             "ref_id" => $student_id,
             "role_id" => 2,
             "active" => false,
+            "ref_table" => "students",
         ];
         DB::table("users")->insert($user);
 
@@ -309,5 +311,55 @@ class StudentsController extends Controller
             'success' => true,
             'data' => $academic_history,
         ], 200);
+    }
+    static function excelImport(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $validator = Validator::make($request->all(), [
+                'file' => 'required|string',
+            ]);
+            $path = Storage::path($request->file);
+            // load with phpspreadsheet
+            $data = IOFactory::load($path);
+            $data = $data->getActiveSheet()->toArray();
+            // remove header in first row
+            array_shift($data);
+
+            array_map(function ($item) {
+                $lecture = DB::table('lecture')->where('nip', $item[4])->first();
+                $student = [
+                    "name" => $item[0],
+                    "nim" => $item[1],
+                    "start_education_year" => $item[2],
+                    "entrance_code" => $item[3],
+                    "lecture_id" => $lecture->id,
+                    "status" => 00,
+                    "created_by" => Auth::user()->id,
+                    "updated_by" => Auth::user()->id,
+                ];
+                $user = [
+                    "username" => $item[0],
+                    "password" => bcrypt('123456'),
+                    "role_id" => 2,
+                    "active" => false,
+                    "ref_table" => "students",
+                ];
+                $student_id = DB::table("students")->insertGetId($student);
+                $user['ref_id'] = $student_id;
+                DB::table("users")->insert($user);
+            }, $data);
+            DB::commit();
+            return response()->json([
+                'success' => true,
+                'message' => 'Student successfully imported'
+            ], 201);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 422);
+        }
     }
 }

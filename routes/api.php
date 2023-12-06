@@ -50,6 +50,7 @@ Route::group(
         Route::get('/{id}', [StudentsController::class, 'show']);
         Route::post('/', [StudentsController::class, 'store']);
         Route::put('/', [StudentsController::class, 'update']);
+        Route::post('/import', [StudentsController::class, 'excelImport']);
         Route::get('/academic/{id}', [StudentsController::class, 'academic']);
     }
 );
