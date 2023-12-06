@@ -339,7 +339,7 @@ class StudentsController extends Controller
                     "updated_by" => Auth::user()->id,
                 ];
                 $user = [
-                    "username" => $item[0],
+                    "username" => $item[1],
                     "password" => bcrypt('123456'),
                     "role_id" => 2,
                     "active" => false,
