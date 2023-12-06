@@ -167,6 +167,10 @@ class AuthController extends Controller
             DB::table('users')->where('id', $request->id)->update([
                 'password' => bcrypt('123456')
             ]);
+            return response()->json([
+                'success' => true,
+                'message' => 'Password successfully reset'
+            ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
