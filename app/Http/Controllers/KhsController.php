@@ -52,7 +52,7 @@ class KhsController extends Controller
             $limit = $request->limit;
         }
 
-        $khs = $khs->paginate($limit, ['page' => $page]);
+        $khs = $khs->orderBy('semester_value', 'desc')->paginate($limit, ['page' => $page]);
 
 
         $field_uploads = ["scan_khs"];

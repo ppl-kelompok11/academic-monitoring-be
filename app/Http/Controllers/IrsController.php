@@ -51,7 +51,7 @@ class IrsController extends Controller
             $limit = $request->limit;
         }
 
-        $irs = $irs->paginate($limit, ['page' => $page]);
+        $irs = $irs->orderBy('semester_value', 'asc')->paginate($limit, ['page' => $page]);
 
         $field_uploads = ["scan_irs"];
         // add url to scan_irs
