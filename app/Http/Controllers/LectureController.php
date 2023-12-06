@@ -37,7 +37,7 @@ class LectureController extends Controller
     public function show($id)
     {
         $student = DB::table('lecture')
-            ->select('lecture.*', 'users.email', 'provinces.province_name as province_name', 'cities.city_name as city_name')
+            ->select('lecture.*', 'users.email', 'users.id as user_id', 'provinces.province_name as province_name', 'cities.city_name as city_name')
             ->join('users', 'lecture.id', '=', 'users.ref_id')
             ->join('provinces', 'lecture.province_id', '=', 'provinces.id')
             ->join('cities', 'lecture.city_id', '=', 'cities.id')

@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
@@ -110,5 +112,66 @@ class AuthController extends Controller
             'token_type' => 'bearer',
             'expires_in' => auth()->factory()->getTTL() * 60
         ]);
+    }
+
+    public function changePassword()
+    {
+        $credentials = request(['old_password', 'new_password']);
+        $validator = Validator::make($credentials, [
+            'old_password' => 'required',
+            'new_password' => 'required|min:6'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => $validator->errors()->first(),
+            ], 422);
+        }
+
+        $user = DB::table('users')
+            ->select('users.*')
+            ->where('id', auth()->user()->id)
+            ->first();
+
+        if (!password_verify($credentials['old_password'], $user->password)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Old password is wrong',
+            ], 422);
+        }
+
+        DB::table('users')->where('id', auth()->user()->id)->update([
+            'password' => bcrypt($credentials['new_password'])
+        ]);
+
+
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Password changed'
+        ]);
+    }
+    public function resetPassword(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'id' => 'required|string|exists:users,id',
+            ]);
+            if ($validator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $validator->errors()->first(),
+                ], 422);
+            }
+            DB::table('users')->where('id', $request->id)->update([
+                'password' => bcrypt('123456')
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => "Internal server error"
+            ], 500);
+        }
     }
 }
