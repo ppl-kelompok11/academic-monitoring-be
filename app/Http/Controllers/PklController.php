@@ -156,7 +156,7 @@ class PklController extends Controller
         }
 
         $pkl = [
-            "semester_value" => $request->semester,
+            "semester_value" => $request->semester_value,
             "grade" => $request->grade,
             "scan_pkl" => $request->scan_pkl,
             "student_id" => $student_id,
