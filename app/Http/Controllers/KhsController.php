@@ -126,7 +126,7 @@ class KhsController extends Controller
             'sks' => 'required|integer',
             'ip' => 'required|numeric',
             'scan_khs' => 'required|string',
-            'ip_kumulatif' => 'required|numeric|between:0,4',
+            'ip_kumulatif' => 'required|numeric',
             'sks_kumulatif' => 'required|integer',
         ]);
 
