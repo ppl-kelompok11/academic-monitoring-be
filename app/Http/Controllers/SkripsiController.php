@@ -185,6 +185,7 @@ class SkripsiController extends Controller
         $student_id = Auth::user()->ref_id;
         // validate incoming request
         $validator = Validator::make($request->all(),  [
+            'id' => 'required|integer|exists:skripsi,id',
             'grade' => 'required|numeric',
             'scan_skripsi' => 'required|string',
             "semester_value" => 'required|numeric',
@@ -225,6 +226,7 @@ class SkripsiController extends Controller
         }
 
         $skripsi = [
+            "id" => $request->id,
             "semester_value" => $request->semester_value,
             "grade" => $request->grade,
             "scan_skripsi" => $request->scan_skripsi,
@@ -235,8 +237,7 @@ class SkripsiController extends Controller
             "updated_by" => Auth::user()->id,
         ];
 
-        $skripsi_id = DB::table("skripsi")->insertGetId($skripsi);
-        $skripsi["id"] = $skripsi_id;
+        $skripsi_id = DB::table("skripsi")->update($skripsi);
 
         return response()->json([
             'success' => true,
