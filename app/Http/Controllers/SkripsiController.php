@@ -123,7 +123,7 @@ class SkripsiController extends Controller
         $validator = Validator::make($request->all(),  [
             'grade' => 'requiredif:skripsi_status,passed|string',
             'scan_skripsi' => 'requiredif:skripsi_status,passed|string',
-            "semester_value" => 'required|integer',
+            "semester_value" => 'required|numeric',
         ]);
 
         // if error
@@ -187,7 +187,7 @@ class SkripsiController extends Controller
         $validator = Validator::make($request->all(),  [
             'grade' => 'requiredif:skripsi_status,passed|nullable|integer',
             'scan_skripsi' => 'requiredif:skripsi_status,passed|nullable|integer',
-            "semester_value" => 'required|integer',
+            "semester_value" => 'required|numeric',
         ]);
 
         // if error
